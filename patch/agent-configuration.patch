@@ -1,0 +1,79 @@
+diff --git a/dist/templates/zcode/agents/trellis-implement.md b/dist/templates/zcode/agents/trellis-implement.md
+--- a/dist/templates/zcode/agents/trellis-implement.md
++++ b/dist/templates/zcode/agents/trellis-implement.md
+@@ -3,6 +3,9 @@
+ description: |
+   Code implementation expert. Understands specs and requirements, then implements features. No git commit allowed.
+ color: "#4f46e5"
++model: GLM-5.3
++thoughtLevel: max
++injectAgentsMd: true
+ ---
+ # Implement Agent
+ 
+diff --git a/dist/templates/zcode/agents/trellis-check.md b/dist/templates/zcode/agents/trellis-check.md
+--- a/dist/templates/zcode/agents/trellis-check.md
++++ b/dist/templates/zcode/agents/trellis-check.md
+@@ -3,6 +3,9 @@
+ description: |
+   Code quality check expert. Reviews code changes against specs and self-fixes issues.
+ color: "#4f46e5"
++model: GLM-5.3-Flash
++thoughtLevel: max
++injectAgentsMd: true
+ ---
+ # Check Agent
+ 
+diff --git a/dist/templates/zcode/agents/trellis-research.md b/dist/templates/zcode/agents/trellis-research.md
+--- a/dist/templates/zcode/agents/trellis-research.md
++++ b/dist/templates/zcode/agents/trellis-research.md
+@@ -3,6 +3,9 @@
+ description: |
+   Code and tech search expert. Finds files, patterns, and tech solutions, and PERSISTS every finding to the current task's research/ directory. No code modifications outside that directory.
+ color: "#4f46e5"
++model: GLM-5.3-Flash
++thoughtLevel: max
++injectAgentsMd: true
+ ---
+ # Research Agent
+ 
+diff --git a/dist/templates/codex/agents/trellis-implement.toml b/dist/templates/codex/agents/trellis-implement.toml
+--- a/dist/templates/codex/agents/trellis-implement.toml
++++ b/dist/templates/codex/agents/trellis-implement.toml
+@@ -1,7 +1,7 @@
+ name = "trellis-implement"
+ description = "Workspace-write Trellis implementer that follows specs and keeps generated templates in sync."
+ sandbox_mode = "workspace-write"
+-# model = "gpt-5.6-terra"
++# model = "gpt-6.1-sol"
+ # model_reasoning_effort = "high"
+ 
+ developer_instructions = """
+diff --git a/dist/templates/codex/agents/trellis-check.toml b/dist/templates/codex/agents/trellis-check.toml
+--- a/dist/templates/codex/agents/trellis-check.toml
++++ b/dist/templates/codex/agents/trellis-check.toml
+@@ -1,8 +1,8 @@
+ name = "trellis-check"
+ description = "Workspace-write Trellis reviewer that self-fixes spec drift, lint/type-check failures, and missing tests."
+ sandbox_mode = "workspace-write"
+-# model = "gpt-5.6-terra"
+-# model_reasoning_effort = "high"
++# model = "gpt-6.1-terra"
++# model_reasoning_effort = "max"
+ 
+ developer_instructions = """
+ You are running as the `trellis-check` sub-agent. The main session has dispatched you to review and self-fix.
+diff --git a/dist/templates/codex/agents/trellis-research.toml b/dist/templates/codex/agents/trellis-research.toml
+--- a/dist/templates/codex/agents/trellis-research.toml
++++ b/dist/templates/codex/agents/trellis-research.toml
+@@ -1,8 +1,8 @@
+ name = "trellis-research"
+ description = "Trellis researcher for specs, code patterns, and affected files. Writes findings into {TASK_DIR}/research/ — read-only elsewhere."
+ sandbox_mode = "workspace-write"
+-# model = "gpt-5.6-terra"
+-# model_reasoning_effort = "high"
++# model = "gpt-6.1-terra"
++# model_reasoning_effort = "max"
+ 
+ developer_instructions = """
+ You are the Trellis researcher agent.

@@ -1,0 +1,12 @@
+diff --git a/dist/templates/common/skills/check.md b/dist/templates/common/skills/check.md
+--- a/dist/templates/common/skills/check.md
++++ b/dist/templates/common/skills/check.md
+@@ -47,7 +47,7 @@
+ 
+ ### Test Coverage
+ 
+-- [ ] New function → unit test added?
++- [ ] Affected behavior and concrete defects have valid test coverage? Add tests only for actual gaps.
+ - [ ] Bug fix → regression test added?
+ - [ ] Changed behavior → existing tests updated?
+ 

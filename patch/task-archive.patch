@@ -1,0 +1,60 @@
+diff --git a/dist/templates/trellis/workflow.md b/dist/templates/trellis/workflow.md
+--- a/dist/templates/trellis/workflow.md
++++ b/dist/templates/trellis/workflow.md
+@@ -47,6 +47,9 @@
+ python3 ./.trellis/scripts/task.py start <name>          # set active task (session-scoped when available)
+ python3 ./.trellis/scripts/task.py current --source      # show active task and source
+ python3 ./.trellis/scripts/task.py finish                # clear active task (triggers after_finish hooks)
++# Without a separate task branch, skip branch validation.
++python3 ./.trellis/scripts/task.py archive <name> --skip-branch-validation
++# With an explicitly used task branch, retain branch validation.
+ python3 ./.trellis/scripts/task.py archive <name>        # move to archive/{year-month}/
+ python3 ./.trellis/scripts/task.py list [--mine] [--status <s>]
+ python3 ./.trellis/scripts/task.py list-archive
+diff --git a/dist/templates/common/commands/finish-work.md b/dist/templates/common/commands/finish-work.md
+--- a/dist/templates/common/commands/finish-work.md
++++ b/dist/templates/common/commands/finish-work.md
+@@ -44,6 +44,14 @@
+ 
+ ## Step 3: Archive task(s)
+ 
++Without a separate task branch, use:
++
++```bash
++{{PYTHON_CMD}} ./.trellis/scripts/task.py archive <task-name> --skip-branch-validation
++```
++
++With an explicitly used task branch, retain branch validation:
++
+ ```bash
+ {{PYTHON_CMD}} ./.trellis/scripts/task.py archive <task-name>
+ ```
+diff --git a/dist/templates/trellis/scripts/common/task_store.py b/dist/templates/trellis/scripts/common/task_store.py
+--- a/dist/templates/trellis/scripts/common/task_store.py
++++ b/dist/templates/trellis/scripts/common/task_store.py
+@@ -1538,8 +1538,15 @@
+         )
+         return not source_was_tracked
+ 
++    # HEAD still contains the source when its deletion is already staged.
++    rc, head_source_out, _ = run_git(
++        ["ls-tree", "-r", "--name-only", "HEAD", "--", source_rel],
++        cwd=repo_root,
++    )
++    source_in_head = rc == 0 and bool(head_source_out.strip())
++    commit_paths = [*paths, source_rel] if source_in_head else list(paths)
+     rc, _, _ = run_git(
+-        ["diff", "--cached", "--quiet", "--", *paths, source_rel],
++        ["diff", "--cached", "--quiet", "--", *commit_paths],
+         cwd=repo_root,
+     )
+     if rc == 0:
+@@ -1552,7 +1559,7 @@
+     # chore commit (#579). `source_rel` is included so the source-side
+     # deletions staged above land in the same commit.
+     rc, _, err = run_git_retry_index_lock(
+-        ["commit", "-m", commit_msg, "--", *paths, source_rel], cwd=repo_root
++        ["commit", "-m", commit_msg, "--", *commit_paths], cwd=repo_root
+     )
+     if rc == 0:
+         print(f"[OK] Auto-committed: {commit_msg}", file=sys.stderr)
